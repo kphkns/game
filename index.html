@@ -66,9 +66,9 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-width: 1000px;
-            margin: 20px 0;
-            gap: 10px;
+            max-width: 950px;
+            margin: 15px 0;
+            gap: 8px;
         }
 
         .grid button {
@@ -150,8 +150,8 @@
         /* Button Container */
         .button-container {
             display: flex;
-            gap: 10px;
-            margin: 20px 0;
+            gap: 8px;
+            margin: 12px 0;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -233,6 +233,8 @@
         <button class="btn secondary" onclick="confirmReset()">Reset</button>
         <button id="generateBtn" class="btn primary" onclick="generateNumber()">Generate</button>
         <button class="btn secondary" onclick="showHistory()">History</button>
+        
+        <button id="autoGenerateBtn" class="btn secondary" onclick="toggleAutoGenerate()">Turn Auto-Generate Off</button>
         <button id="voiceToggleBtn" class="btn secondary" onclick="toggleVoice()">Turn Voice Off</button>
     </div>
 
@@ -266,6 +268,7 @@
         let nextNumber = null;
         const totalNumbers = 90;
         let voiceEnabled = true;  // Default state for voice assistance
+        let autoGenerateEnabled = false; // Default state for auto-generate
 
         // Prevent page refresh warning
         window.addEventListener('beforeunload', function (e) {
@@ -373,6 +376,42 @@
 
         function closeHistoryPopup() {
             document.getElementById('historyModal').style.display = 'none';
+        }
+
+        // Auto-generate feature
+        function toggleAutoGenerate() {
+            autoGenerateEnabled = !autoGenerateEnabled;
+            const autoGenerateBtn = document.getElementById('autoGenerateBtn');
+            autoGenerateBtn.textContent = autoGenerateEnabled ? 'Turn Auto-Generate Off' : 'Turn Auto-Generate On';
+            
+            if (autoGenerateEnabled) {
+                autoGenerateBtn.classList.add('primary');
+                autoGenerateBtn.classList.remove('secondary');
+                startAutoGenerate();
+            } else {
+                autoGenerateBtn.classList.add('secondary');
+                autoGenerateBtn.classList.remove('primary');
+                stopAutoGenerate();
+            }
+        }
+
+        let autoGenerateInterval;
+
+        function startAutoGenerate() {
+            autoGenerateInterval = setInterval(() => {
+                if (!autoGenerateEnabled) return; // Stop if auto-generate is turned off
+
+                if (selectedNumbers.length < totalNumbers) {
+                    generateNumber();
+                } else {
+                    openGameOverPopup();
+                    stopAutoGenerate();
+                }
+            }, 2000); // Adjust interval as needed (2000ms = 2 seconds)
+        }
+
+        function stopAutoGenerate() {
+            clearInterval(autoGenerateInterval);
         }
     </script>
 </body>
